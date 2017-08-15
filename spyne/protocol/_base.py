@@ -82,7 +82,7 @@ from spyne.model import Date
 from spyne.model import Duration
 from spyne.model import Boolean
 from spyne.model.binary import Attachment # DEPRECATED
-from spyne.util import DefaultAttrDict, memoize_id, six
+from spyne.util import DefaultAttrDict, memoize_id, six, PY3
 
 from spyne.util.cdict import cdict
 
@@ -669,7 +669,10 @@ class ProtocolBase(object):
         encoding = cls.Attributes.encoding
         if encoding is BINARY_ENCODING_USE_DEFAULT:
             encoding = suggested_encoding
-        return binary_encoding_handlers[encoding](value)
+        response = binary_encoding_handlers[encoding](value)
+        if PY3:
+            response = response.decode()
+        return response
 
     def byte_array_to_string_iterable(self, cls, value):
         return value
